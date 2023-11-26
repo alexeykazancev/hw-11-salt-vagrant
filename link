@@ -1,0 +1,4 @@
+https://cmdref.net/software/vargant/vagrantfile
+
+minion add master
+minion_id add id:
