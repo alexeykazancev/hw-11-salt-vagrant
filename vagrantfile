@@ -17,8 +17,8 @@ Vagrant.configure("2") do |config|
             end
 
             node.vm.hostname = "master-node"
-            node.vm.network "public_network", ip: IP_NTW + "#{NODE_IP_START + i}"
-            node.vm.network "forwarded_port", guest: 22, host: "#{2720 + i}"
+            node.vm.network "public_network", bridge: "vboxnet0", ip: IP_NTW + "#{NODE_IP_START + i}"
+            node.vm.network "forwarded_port", guest: 22, host: "#{8920 + i}"
 
             node.vm.provision "shell", inline: <<-SHELL
               apt update
@@ -28,7 +28,10 @@ Vagrant.configure("2") do |config|
               echo deb [signed-by=/etc/apt/keyrings/salt-archive-keyring-2023.gpg arch=amd64] https://repo.saltproject.io/salt/py3/debian/11/amd64/latest bullseye main | tee /etc/apt/sources.list.d/salt.list
               apt update
               apt install -y salt-master salt-ssh salt-syndic salt-cloud salt-api
-              echo interface: 192.168.56.4 | tee -a /etc/salt/master
+              mkdir /etc/salt/master.d
+              echo interface: 192.168.56.4 | tee -a /etc/salt/master.d/network.conf
+              echo ret_port: 4506 | tee -a /etc/salt/master.d/network.conf
+              echp publish_port: 4505 | tee -a /etc/salt/master.d/network.conf
               systemctl enable salt-master && systemctl start salt-master
               systemctl enable salt-syndic && systemctl start salt-syndic
               systemctl enable salt-api && systemctl start salt-api
@@ -47,8 +50,8 @@ Vagrant.configure("2") do |config|
             end
 
             node.vm.hostname = "minion-node"
-            node.vm.network "public_network", ip: IP_NTW + "#{NODE_IP_START + i + 1}"
-            node.vm.network "forwarded_port", guest: 22, host: "#{2730 + i}"
+            node.vm.network "public_network", bridge: "vboxnet0", ip: IP_NTW + "#{NODE_IP_START + i + 1}"
+            node.vm.network "forwarded_port", guest: 22, host: "#{8930 + i}"
 
             node.vm.provision "shell", inline: <<-SHELL
               apt update
@@ -59,7 +62,9 @@ Vagrant.configure("2") do |config|
               apt update
               apt install -y salt-minion salt-ssh
               echo 192.168.56.4 master-node | tee -a /etc/hosts
-              echo minion-0 | tee -a /etc/salt/minion_id
+              mkdir /etc/salt/minion.d
+              echo Master: 192.168.56.4 | tee -a /etc/salt/minion.d/master.conf
+              echo minion-0 | tee -a /etc/salt/minion.d/id.conf
               systemctl enable salt-minion && systemctl start salt-minion
             SHELL
 
@@ -78,8 +83,8 @@ Vagrant.configure("2") do |config|
             end
 
             node.vm.hostname = "nodecontroller"
-            node.vm.network "public_network", ip: IP_NTW + "#{CONTROLLER_IP_START + i}"
-            node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
+            node.vm.network "public_network", bridge: "vboxnet0", ip: IP_NTW + "#{CONTROLLER_IP_START + i}"
+            node.vm.network "forwarded_port", guest: 22, host: "#{8910 + i}"
 
             node.vm.provision "shell", inline: <<-SHELL
               apt update
