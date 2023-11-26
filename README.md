@@ -8,7 +8,8 @@
 настроить управление конфигурацией nginx и iptables.
 
 
-Создаем конфиг, скачиваем заранее бокс файл для vbox c https://app.vagrantup.com/debian/boxes/bullseye64 (в моем случае deb11 переименовываем скачанный бокс в bullseye.box), прописываем его в конфиге
+Клонируем проект: git clone https://github.com/alexeykazancev/hw-11-salt-vagrant.git 
+скачиваем заранее бокс файл для virtualbox c https://app.vagrantup.com/debian/boxes/bullseye64 (в моем случае deb11 переименовываем скачанный бокс в bullseye.box), положить в папку с проектом
 
 для запуска деплоя выполнить vagrant up
 
@@ -38,3 +39,5 @@
 внутри должны быть файлы nginx.sls и nginx.conf
 
 для запуска установки nginx выполнить: sudo salt 'minion-node' pkg.install nginx
+для проверки корректности установки выполнить: sudo curl 192.168.56.5
+
