@@ -41,10 +41,12 @@
 для запуска установки nginx выполнить: sudo salt 'minion-node' pkg.install nginx
 для проверки корректности установки выполнить: sudo curl 192.168.56.5
 
-для добавления правила разрешения входящего HTTP-трафика (порт 80) выполнить: 
+для вставки правила разрешения входящего HTTP-трафика (порт 80) на 3ю строку выполнить: 
 
+salt '*' iptables.insert filter INPUT position=3 rule='-m state --state NEW,ESTABLISHED -j ACCEPT'
 
+чтобы удалить это правило, выполнить:
 
-salt '*' iptables.append filter INPUT rule='-m state --state RELATED,ESTABLISHED -j ACCEPT'
+salt '*' iptalbes.delete filter INPUT position=3 salt '*' iptables.delete filter INPUT rule='-m state --state NEW,ESTABLISHED -j ACCEPT'
 
--A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+так же можно запретить http трафик , добавив в конце вместо ассеп - DROP
